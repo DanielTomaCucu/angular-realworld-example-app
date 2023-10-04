@@ -1,24 +1,60 @@
 /// <reference types="cypress" />
 
 describe("Test 1", () => {
-  beforeEach('login', () => {
-    cy.loginToApp()
+  beforeEach("login", () => {
+    cy.intercept("GET", "https://api.realworld.io/api/tags", {
+      fixture: "tags.json",
+    });
+    cy.loginToApp();
   });
-  it('should verify the article is addeed', () => {
-    cy.intercept('POST','https://api.realworld.io/api/articles/').as('postArticle')
+  it("should verify the article is addeed", () => {
+    cy.intercept("POST", "https://api.realworld.io/api/articles/").as(
+      "postArticle"
+    );
     cy.contains("New Article").click();
-     cy.get('[placeholder="Article Title"]').type("test 00000");
+    cy.get('[placeholder="Article Title"]').type("test 00000");
     cy.get('[formcontrolname="description"]').type("test cy");
-    cy.get("textarea").type('test test test');
+    cy.get("textarea").type("test test test");
     cy.contains(" Publish Article").click();
 
-    cy.wait('@postArticle');
-    cy.get('@postArticle').then(xhr => {
+    cy.wait("@postArticle");
+    cy.get("@postArticle").then((xhr) => {
       console.log(xhr);
       expect(xhr.response.statusCode).to.equal(201);
-      expect(xhr.response.body.article.body).to.equal('test test test');
+      expect(xhr.response.body.article.body).to.equal("test test test");
       expect(xhr.response.body.article.description).to.equal("test cy");
-    })
-  })
+    });
+  });
 
+  it("verify if tags are displayed correctly", () => {
+    cy.get(".tag-list")
+      .should("contain", "welcome")
+      .and("contain", "cypress")
+      .and("contain", "testing");
+  });
+
+  it.only("verify global feed", () => {
+    cy.intercept("GET", "https://api.realworld.io/api/articles/feed*", {
+      articles: [],
+      articlesCount: 0,
+    });
+    cy.intercept("GET", "https://api.realworld.io/api/articles*", {
+      fixture: "articles.json",
+    });
+    cy.contains("Global Feed").click();
+    cy.get("app-article-list button").then((heartBtn) => {
+      expect(heartBtn[0]).to.contain("1");
+      expect(heartBtn[1]).to.contain("0");
+    });
+
+    cy.fixture("articles").then((file) => {
+      const artlink = file.articles.slug;
+      file.articles[1].favoritesCount = 1;
+      cy.intercept(
+        "POST",
+        "https://api.realworld.io/api/articles/" + artlink + "/favorite", file
+      );
+    });
+    cy.get("app-article-list button").eq(1).click().should('contain', '1');
+  });
 });
