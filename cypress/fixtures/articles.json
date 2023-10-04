@@ -1,0 +1,39 @@
+{
+  "articles": [
+    {
+      "slug": "test-00000-238222",
+      "title": "test 00000",
+      "description": "test cy",
+      "body": "test test test",
+      "tagList": [],
+      "createdAt": "2023-10-03T16:42:33.540Z",
+      "updatedAt": "2023-10-03T16:42:33.540Z",
+      "favorited": false,
+      "favoritesCount": 1,
+      "author": {
+        "username": "0987654321",
+        "bio": null,
+        "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+        "following": false
+      }
+    },
+    {
+      "slug": "test-0000-238222",
+      "title": "test 0000",
+      "description": "test cy",
+      "body": "test test test",
+      "tagList": [],
+      "createdAt": "2023-10-03T16:42:16.035Z",
+      "updatedAt": "2023-10-03T16:42:16.035Z",
+      "favorited": false,
+      "favoritesCount": 0,
+      "author": {
+        "username": "0987654321",
+        "bio": null,
+        "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+        "following": false
+      }
+    }
+  ],
+  "articlesCount": 2
+}

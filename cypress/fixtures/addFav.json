@@ -1,0 +1,32 @@
+{
+  "article": {
+    "id": 368666,
+    "slug": "test-00000-238222",
+    "title": "test 00000",
+    "description": "test cy",
+    "body": "test test test",
+    "createdAt": "2023-10-03T16:42:33.540Z",
+    "updatedAt": "2023-10-03T16:42:33.540Z",
+    "authorId": 238222,
+    "tagList": [],
+    "author": {
+      "username": "0987654321",
+      "bio": null,
+      "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+      "following": false
+    },
+    "favoritedBy": [
+      {
+        "id": 238222,
+        "email": "daniel.tom@yahoo.com",
+        "username": "0987654321",
+        "password": "$2a$10$ZPi1EPYy0YYT4eS/XNhV.OEwbrevnSaDgEEmEGvSMDHbGdbiXt7VS",
+        "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+        "bio": null,
+        "demo": false
+      }
+    ],
+    "favorited": true,
+    "favoritesCount": 1
+  }
+}
