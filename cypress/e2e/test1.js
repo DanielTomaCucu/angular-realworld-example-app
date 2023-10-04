@@ -2,9 +2,12 @@
 
 describe("Test 1", () => {
   beforeEach("login", () => {
-    cy.intercept("GET", "https://api.realworld.io/api/tags", {
-      fixture: "tags.json",
-    });
+    cy.intercept(
+      { method: "GET", path: "tags" },
+      {
+        fixture: "tags.json",
+      }
+    );
     cy.loginToApp();
   });
   it("should verify the article is addeed", () => {
@@ -33,7 +36,7 @@ describe("Test 1", () => {
       .and("contain", "testing");
   });
 
-  it.only("verify global feed", () => {
+  it("verify global feed", () => {
     cy.intercept("GET", "https://api.realworld.io/api/articles/feed*", {
       articles: [],
       articlesCount: 0,
@@ -52,9 +55,61 @@ describe("Test 1", () => {
       file.articles[1].favoritesCount = 1;
       cy.intercept(
         "POST",
-        "https://api.realworld.io/api/articles/" + artlink + "/favorite", file
+        "https://api.realworld.io/api/articles/" + artlink + "/favorite",
+        file
       );
     });
-    cy.get("app-article-list button").eq(1).click().should('contain', '1');
+    cy.get("app-article-list button").eq(1).click().should("contain", "1");
+  });
+
+  it.only("should verify the article is addeed", () => {
+    cy.intercept("POST", "**/articles", (req) => {
+      req.body.article.description = "This is a desc 1";
+    }).as("postArticle");
+    cy.contains("New Article").click();
+    cy.get('[placeholder="Article Title"]').type("test 001000");
+    cy.get('[formcontrolname="description"]').type("test cy");
+    cy.get("textarea").type("test test test");
+    cy.contains(" Publish Article").click();
+
+    cy.wait("@postArticle");
+    cy.get("@postArticle").then((xhr) => {
+      console.log(xhr);
+      expect(xhr.response.statusCode).to.equal(201);
+      expect(xhr.response.body.article.body).to.equal("test test test");
+      expect(xhr.response.body.article.description).to.equal(
+        "This is a desc 1"
+      );
+    });
+  });
+  it("delete an article in a global feed", () => {
+    const user = {
+      user: {
+        email: "daniel@d.com",
+        password: "123456",
+      },
+    };
+
+    const artBody = {
+      article: {
+        body: "ttt",
+        description: "ttt",
+        tagList: [],
+        title: "ttt",
+      },
+    };
+    cy.request("POST", "https://api.realworld.io/api/users/login", user)
+      .its("body")
+      .then((body) => {
+        const token = body.user.token;
+        cy.request({
+          url: "https://api.realworld.io/api/articles/",
+          headers: { "Authorization": "Token " + token },
+          method: "POST",
+          body: artBody,
+        }).then((response) => {
+          expect(response.status).to.equal(200);
+        });
+      });
   });
 });
