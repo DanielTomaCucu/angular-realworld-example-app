@@ -36,12 +36,12 @@ describe("Test 1", () => {
       .and("contain", "testing");
   });
 
-  it("verify global feed", () => {
-    cy.intercept("GET", "https://api.realworld.io/api/articles/feed*", {
+  it.only("verify global feed", () => {
+    cy.intercept("GET", Cypress.env('apiUrl')+ "/api/articles/feed*", {
       articles: [],
       articlesCount: 0,
     });
-    cy.intercept("GET", "https://api.realworld.io/api/articles*", {
+    cy.intercept("GET", Cypress.env("apiUrl") +  "/api/articles*", {
       fixture: "articles.json",
     });
     cy.contains("Global Feed").click();
@@ -55,14 +55,14 @@ describe("Test 1", () => {
       file.articles[1].favoritesCount = 1;
       cy.intercept(
         "POST",
-        "https://api.realworld.io/api/articles/" + artlink + "/favorite",
+        Cypress.env("apiUrl") +  "/api/articles/" + artlink + "/favorite",
         file
       );
     });
     cy.get("app-article-list button").eq(1).click().should("contain", "1");
   });
 
-  it.only("should verify the article is addeed", () => {
+  it("should verify the article is addeed", () => {
     cy.intercept("POST", "**/articles", (req) => {
       req.body.article.description = "This is a desc 1";
     }).as("postArticle");
@@ -85,8 +85,8 @@ describe("Test 1", () => {
   it("delete an article in a global feed", () => {
     const user = {
       user: {
-        email: "daniel@d.com",
-        password: "123456",
+        email: Cypress.env('userName'),
+        password: Cypress.env('password'),
       },
     };
 
@@ -98,7 +98,7 @@ describe("Test 1", () => {
         title: "ttt",
       },
     };
-    cy.request("POST", "https://api.realworld.io/api/users/login", user)
+    cy.request("POST", Cypress.env('apiUrl') + "/api/users/login", user)
       .its("body")
       .then((body) => {
         const token = body.user.token;
